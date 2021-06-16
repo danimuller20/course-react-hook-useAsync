@@ -1,20 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useAsync } from './hooks/useAsync';
+import { fetchData } from './utils/fetchData';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [reFetchData, result, error, status] = useAsync(fetchData, true);
+
+  function handleClick() {
+    reFetchData();
+  }
+
+  if (status === 'idle') {
+    return <pre>idle: Nada executando</pre>;
+  }
+
+  if (status === 'pending') {
+    return <pre>pending: Loading...</pre>;
+  }
+
+  if (status === 'error') {
+    return <pre>error: {error.message}</pre>;
+  }
+
+  if (status === 'settled') {
+    return <pre onClick={handleClick}>settled: {JSON.stringify(result, null, 2)}</pre>;
+  }
+
+  return 'IXIII';
 }
 
 export default App;
